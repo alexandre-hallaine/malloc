@@ -1,35 +1,53 @@
-HOSTTYPE	:= $(shell uname -m)_$(shell uname -s)
-NAME		:= libft_malloc_$(HOSTTYPE).so
-LINK		:= libft_malloc.so
+# Compiler and flags
+CC := gcc
+CFLAGS := -Wall -Wextra -Werror
 
-HEADERS	:= -I ./include -I ./libft
-LIBS	:= -L ./libft -lft
-CFLAGS	:= -Wall -Wextra -Wunreachable-code
-# CFLAGS	+= -Werror
+# Target file names
+HOSTTYPE := $(shell uname -m)_$(shell uname -s)
+NAME := libft_malloc_$(HOSTTYPE).so
+LINK := libft_malloc.so
 
-SRCS	:= $(shell find src -type f -name "*.c")
-OBJS	:= $(SRCS:src/%.c=obj/%.o)
+# Directories
+SRC_DIR := src
+OBJ_DIR := obj
+INCLUDE_DIR := include
+LIBFT_DIR := libft
 
+# Source and object files
+SRCS := $(shell find $(SRC_DIR) -name '*.c')
+OBJS := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
+
+# Compiler and linker options
+CFLAGS += -I$(INCLUDE_DIR) -I$(LIBFT_DIR)
+LDFLAGS := -L$(LIBFT_DIR) -lft
+
+# Phony targets
+.PHONY: all lib clean fclean re
+
+# Default target
 all: $(NAME)
 
+# Build the library
 lib:
-	make -C libft
+	@$(MAKE) -C $(LIBFT_DIR)
 
-obj/%.o: src/%.c
-	mkdir -p $(@D)
-	$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS) && echo "Compiled: $(notdir $<)"
+# Compile source files into object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -o $@ -c $<
 
+# Link object files into the shared library and create a symbolic link
 $(NAME): $(OBJS) lib
-	$(CC) $(OBJS) $(LIBS) -o $(NAME) -shared && echo "Linked: $(NAME)"
-	ln -sf $(NAME) $(LINK) && echo "Linked: $(LINK)"
+	$(CC) $(OBJS) $(LDFLAGS) -o $@ -shared
+	@ln -sf $(NAME) $(LINK)
 
+# Clean compiled files
 clean:
-	rm -rf $(OBJS) && echo "Removed: $(OBJS)"
+	@rm -rf $(OBJ_DIR)
 
+# Remove all compiled files and the library
 fclean: clean
-	rm -rf $(NAME) && echo "Removed: $(NAME)"
+	@rm -f $(NAME)
 
+# Clean and rebuild
 re: clean all
-
-.PHONY: all, lib, clean, fclean, re
-.SILENT:
