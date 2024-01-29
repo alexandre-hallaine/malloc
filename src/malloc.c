@@ -20,12 +20,13 @@ t_heap *allocate_heap(size_t size) {
     else
         heap_first = map;
 
-    t_heap *heap_new = (t_heap *)map;
+    t_heap *heap_new = map;
     heap_new->next = NULL;
     heap_new->size = size;
 
     // create the free space block
-    t_block *block_first = (t_block *)(map + sizeof(t_heap));
+    t_block *block_first = map + sizeof(t_heap);
+    block_first->prev = block_first->next = NULL;
     block_first->size = size - sizeof(t_heap) - sizeof(t_block);
     block_first->free = true;
 
@@ -35,9 +36,16 @@ t_heap *allocate_heap(size_t size) {
 void allocate_block(t_block *block, size_t size) {
     // if block is too big, split it
     if (block->size > size) {
-        t_block *block_new = (t_block *)((void *)block + sizeof(t_block) + size);
-        block_new->size = block->size - sizeof(t_block) - size;
+        t_block *block_new = (void *)block + sizeof(t_block) + size;
         block_new->free = true;
+
+        block_new->prev = block;
+        block_new->next = block->next;
+        if (block->next != NULL)
+            block->next->prev = block_new;
+        block->next = block_new;
+
+        block_new->size = block->size - sizeof(t_block) - size;
         block->size = size;
     }
 
@@ -51,20 +59,16 @@ void *malloc(size_t size) {
     //find a free block that fits
     t_block *block_found = NULL;
     for (t_heap *heap = heap_first; heap != NULL && block_found == NULL; heap = heap->next)
-        for (t_block *block = (t_block *)((void *)heap + sizeof(t_heap));
-            (void *)block < (void *)heap + sizeof(t_heap) + heap->size;
-            block = (t_block *)((void *)block + sizeof(t_block) + block->size))
-            if (block->free && block->size >= size) {
+        for (t_block *block = (void *)heap + sizeof(t_heap); block != NULL && block_found == NULL; block = block->next)
+            if (block->free && block->size >= size)
                 block_found = block;
-                break;
-            }
 
     //if no free block found, allocate a new heap
     if (block_found == NULL) {
         t_heap *heap = allocate_heap(HEAP_SIZE);
         if (heap == NULL)
             return NULL;
-        block_found = (t_block *)((void *)heap + sizeof(t_heap));
+        block_found = (void *)heap + sizeof(t_heap);
     }
 
     allocate_block(block_found, size);
