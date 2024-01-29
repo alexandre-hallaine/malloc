@@ -1,13 +1,7 @@
-ifeq ($(HOSTTYPE),)
-	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
-endif
-
 # Target file names
-NAME		:= libft_malloc_$(HOSTTYPE).so
-LINK		:= libft_malloc.so
+NAME		:= test
 
 # Directories
-INC_DIR	:= include
 SRC_DIR	:= src
 OBJ_DIR	:= obj
 
@@ -17,11 +11,11 @@ OBJS	:= $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # Compiler and linker options
 CC		:= gcc
-CFLAGS	:= -Wall -Wextra -Werror -I$(INC_DIR)
+CFLAGS	:= -Wall -Wextra -Werror
 LDFLAGS	:= 
 
 # Libraries
-LIBFT_DIR	:= libft
+LIBFT_DIR	:= ../libft
 LIBFT		:= $(LIBFT_DIR)/libft.a
 CFLAGS		+= -I$(LIBFT_DIR)
 LDFLAGS		+= -L$(LIBFT_DIR) -lft
@@ -43,8 +37,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 # Link object files into the shared library and create a symbolic link
 $(NAME): $(LIBFT) $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) -o $@ -shared
-	@ln -sf $(NAME) $(LINK)
+	$(CC) $(OBJS) $(LDFLAGS) -o $@
 
 # Clean compiled files
 clean:
