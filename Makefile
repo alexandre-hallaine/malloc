@@ -17,8 +17,8 @@ OBJS	:= $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # Compiler and linker options
 CC		:= gcc
-CFLAGS	:= -Wall -Wextra -Werror -I$(INC_DIR)
-LDFLAGS	:= 
+CFLAGS	:= -Wall -Wextra -Werror -I$(INC_DIR) -fPIC
+LDFLAGS	:= -shared
 
 # Libraries
 LIBFT_DIR	:= libft
@@ -43,7 +43,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 # Link object files into the shared library and create a symbolic link
 $(NAME): $(LIBFT) $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) -o $@ -shared
+	$(CC) $(OBJS) $(LDFLAGS) -o $@
 	@ln -sf $(NAME) $(LINK)
 
 # Clean compiled files
