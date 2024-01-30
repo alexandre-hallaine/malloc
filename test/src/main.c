@@ -1,15 +1,41 @@
+#include "types.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 
-int main() {
-    void *ret1 = malloc(8);
-    void *ret2 = malloc(8);
-    printf("basic allocation:\n%p\n%p\n", ret1, ret2);
+void heap_print(t_heap *heap)
+{
+    printf("heap: %p (size: %lu)\n", heap, heap->size);
+    for (t_block *block = (void *)heap + sizeof(t_heap); block != NULL; block = block->next)
+        printf("  block: %p (size: %lu, free: %d)\n", block, block->size, block->free);
+}
 
-    free(ret1);
-    free(ret2);
-    void *ret3 = malloc(16);
-    printf("merge:\n%p\n", ret3);
+int main()
+{
+    void *ptr1 = malloc(HEAP_SIZE - sizeof(t_heap) - sizeof(t_block));
+    t_heap *heap = ptr1 - sizeof(t_block) - sizeof(t_heap);
 
-    return EXIT_SUCCESS;
+    printf("Simple allocation:\n");
+    heap_print(heap);
+    free(ptr1);
+
+    ptr1 = malloc(8);
+    void *ptr2 = malloc(8);
+    void *ptr3 = malloc(8);
+    heap = ptr1 - sizeof(t_block) - sizeof(t_heap);
+
+    printf("Multiple allocations:\n");
+    heap_print(heap);
+
+    free(ptr1);
+    free(ptr2);
+    printf("After multiple free:\n");
+    heap_print(heap);
+
+    ptr1 = malloc(16 + sizeof(t_block));
+    printf("After reusing free space:\n");
+    heap_print(heap);
+
+    free(ptr1);
+    free(ptr3);
 }

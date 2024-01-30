@@ -20,7 +20,7 @@ t_heap *heap_allocate(size_t size)
 
     t_heap *heap_new = map;
     heap_new->next = NULL;
-    heap_new->size = size;
+    heap_new->size = size - sizeof(t_heap);
 
     // create the free space block
     t_block *block_first = map + sizeof(t_heap);
@@ -29,6 +29,36 @@ t_heap *heap_allocate(size_t size)
     block_first->free = true;
 
     return heap_new;
+}
+
+void heap_free(t_heap *heap)
+{
+    if (heap_first == heap)
+        heap_first = heap->next;
+    else
+    {
+        t_heap *prev = NULL;
+        for (prev = heap_first; prev != NULL; prev = prev->next)
+            if (prev->next == heap)
+                break;
+
+        if (prev == NULL)
+            return;
+        prev->next = heap->next;
+    }
+
+    munmap(heap, heap->size);
+}
+
+t_heap *heap_get(void *address)
+{
+    for (t_heap *heap = heap_first; heap != NULL; heap = heap->next)
+    {
+        void *first = (void *)heap + sizeof(t_heap);
+        if (address >= first && address < first + heap->size)
+            return heap;
+    }
+    return NULL;
 }
 
 void heap_defragment(t_heap *heap)

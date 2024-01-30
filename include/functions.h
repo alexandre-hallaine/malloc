@@ -3,6 +3,8 @@
 #include "types.h"
 
 t_heap *heap_allocate(size_t size);
+void heap_free(t_heap *heap);
+t_heap *heap_get(void *address);
 void heap_defragment(t_heap *heap);
 
 void block_split(t_block *block, size_t size);

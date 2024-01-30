@@ -2,6 +2,7 @@
 NAME		:= test
 
 # Directories
+INC_DIR	:= ../include
 SRC_DIR	:= src
 OBJ_DIR	:= obj
 
@@ -11,7 +12,7 @@ OBJS	:= $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # Compiler and linker options
 CC		:= gcc
-CFLAGS	:= -Wall -Wextra -Werror
+CFLAGS	:= -Wall -Wextra -I$(INC_DIR)
 LDFLAGS	:= 
 
 # Libraries
