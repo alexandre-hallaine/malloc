@@ -1,5 +1,4 @@
 #include "functions.h"
-#include "libft.h"
 
 void *realloc(void *ptr, size_t size)
 {
@@ -22,7 +21,9 @@ void *realloc(void *ptr, size_t size)
     if (new == NULL)
         return NULL;
 
-    ft_memcpy(new, ptr, block->size);
+    for (size_t i = 0; i < block->size; i++)
+        ((char *)new)[i] = ((char *)ptr)[i];
+
     free(ptr);
     return new;
 }

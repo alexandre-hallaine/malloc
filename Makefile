@@ -20,21 +20,11 @@ CC		:= gcc
 CFLAGS	:= -Wall -Wextra -Werror -I$(INC_DIR) -fPIC
 LDFLAGS	:= -shared
 
-# Libraries
-LIBFT_DIR	:= libft
-LIBFT		:= $(LIBFT_DIR)/libft.a
-CFLAGS		+= -I$(LIBFT_DIR)
-LDFLAGS		+= -L$(LIBFT_DIR) -lft
-
 # Phony targets
 .PHONY: all clean fclean re
 
 # Default target
 all: $(NAME)
-
-# Build the library
-$(LIBFT):
-	@make -C $(LIBFT_DIR)
 
 # Compile source files into object files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -42,7 +32,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 # Link object files into the shared library and create a symbolic link
-$(NAME): $(LIBFT) $(OBJS)
+$(NAME): $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS) -o $@
 	@ln -sf $(NAME) $(LINK)
 
