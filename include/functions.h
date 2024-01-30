@@ -2,6 +2,9 @@
 
 #include "types.h"
 
+void *malloc(size_t size);
+void free(void *ptr);
+
 t_heap *heap_allocate(size_t size);
 void heap_free(t_heap *heap);
 t_heap *heap_get(void *address);

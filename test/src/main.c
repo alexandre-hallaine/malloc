@@ -27,15 +27,14 @@ int main()
     printf("Multiple allocations:\n");
     heap_print(heap);
 
-    free(ptr1);
     free(ptr2);
+    free(ptr3);
     printf("After multiple free:\n");
     heap_print(heap);
 
-    ptr1 = malloc(16 + sizeof(t_block));
+    ptr1 = realloc(ptr1, 16);
     printf("After reusing free space:\n");
     heap_print(heap);
 
     free(ptr1);
-    free(ptr3);
 }
