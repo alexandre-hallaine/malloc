@@ -2,8 +2,9 @@
 
 #include <sys/mman.h>
 
-t_heap *heap_allocate(size_t size)
+t_heap *heap_allocate(t_heap_type type)
 {
+    size_t size = type * HEAP_SIZE;
     void *map = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (map == MAP_FAILED)
         return NULL;
@@ -20,6 +21,7 @@ t_heap *heap_allocate(size_t size)
 
     t_heap *heap_new = map;
     heap_new->next = NULL;
+    heap_new->type = type;
     heap_new->size = size - sizeof(t_heap);
 
     // create the free space block
@@ -69,4 +71,15 @@ void heap_defragment(t_heap *heap)
             block_merge(block, block->next);
         else
             block = block->next;
+}
+
+t_heap_type heap_type(size_t block_size)
+{
+    block_size *= 100;
+    if (block_size <= (size_t)TINY * HEAP_SIZE)
+        return TINY;
+    else if (block_size <= (size_t)SMALL * HEAP_SIZE)
+        return SMALL;
+    else
+        return LARGE;
 }

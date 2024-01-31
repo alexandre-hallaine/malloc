@@ -10,6 +10,12 @@ typedef struct s_heap t_heap;
 
 extern t_heap *heap_first;
 
+typedef enum e_heap_type {
+    TINY = 1,
+    SMALL = 16,
+    LARGE = 16 * 16
+} t_heap_type;
+
 struct s_block {
     t_block *next;
 
@@ -20,5 +26,6 @@ struct s_block {
 struct s_heap {
     t_heap *next;
 
+    t_heap_type type;
     size_t size;
 };
