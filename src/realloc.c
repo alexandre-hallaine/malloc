@@ -4,13 +4,15 @@ void *realloc(void *ptr, size_t size)
 {
     if (ptr == NULL)
         return malloc(size);
-    block_size_align(&size);
 
     t_heap *heap = heap_get(ptr);
     t_block *block = ptr - sizeof(t_block);
-    t_heap_type type = heap_type(size);
+    if (heap == NULL || block->free)
+        return NULL;
 
-    if (heap != NULL && heap->type == type)
+    block_size_align(&size);
+    t_heap_type type = heap_type(size);
+    if (heap->type == type)
     {
         for (t_block *tmp = block->next; tmp != NULL; tmp = tmp->next)
             if (tmp->free)

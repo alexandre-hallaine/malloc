@@ -27,5 +27,4 @@ struct s_heap {
     t_heap *next;
 
     t_heap_type type;
-    size_t size;
 };

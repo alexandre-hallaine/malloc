@@ -1,15 +1,13 @@
 #include "functions.h"
 
-#include <sys/mman.h>
-
 t_heap *heap_first = NULL;
 
 void *malloc(size_t size)
 {
     block_size_align(&size);
-    if (size > (size_t)HEAP_SIZE)
-        return NULL;
     t_heap_type type = heap_type(size);
+    if (size > type * HEAP_SIZE - sizeof(t_heap) - sizeof(t_block))
+        return NULL;
 
     // find a free block that fits
     t_block *block_found = NULL;

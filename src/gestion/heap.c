@@ -22,7 +22,6 @@ t_heap *heap_allocate(t_heap_type type)
     t_heap *heap_new = map;
     heap_new->next = NULL;
     heap_new->type = type;
-    heap_new->size = size - sizeof(t_heap);
 
     // create the free space block
     t_block *block_first = map + sizeof(t_heap);
@@ -49,15 +48,15 @@ void heap_free(t_heap *heap)
         prev->next = heap->next;
     }
 
-    munmap(heap, heap->size);
+    munmap(heap, heap->type * HEAP_SIZE);
 }
 
 t_heap *heap_get(void *address)
 {
     for (t_heap *heap = heap_first; heap != NULL; heap = heap->next)
     {
-        void *first = (void *)heap + sizeof(t_heap);
-        if (address >= first && address < first + heap->size)
+        if (address >= (void *)heap + sizeof(t_heap)
+            && address < (void *)heap + heap->type * HEAP_SIZE)
             return heap;
     }
     return NULL;
