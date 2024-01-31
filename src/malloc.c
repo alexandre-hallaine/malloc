@@ -6,6 +6,7 @@ t_heap *heap_first = NULL;
 
 void *malloc(size_t size)
 {
+    block_size_align(&size);
     if (size > (size_t)HEAP_SIZE)
         return NULL;
 

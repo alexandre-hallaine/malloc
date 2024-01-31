@@ -20,21 +20,18 @@ int main()
     free(ptr1);
 
     ptr1 = malloc(8);
-    void *ptr2 = malloc(8);
-    void *ptr3 = malloc(8);
+    void *ptr2 = malloc(32);
+    void *ptr3 = malloc(16);
     heap = ptr1 - sizeof(t_block) - sizeof(t_heap);
 
     printf("Multiple allocations:\n");
     heap_print(heap);
 
     free(ptr2);
-    free(ptr3);
-    printf("After multiple free:\n");
-    heap_print(heap);
-
-    ptr1 = realloc(ptr1, 16);
-    printf("After reusing free space:\n");
+    ptr1 = realloc(ptr1, 41);
+    printf("After reusing block:\n");
     heap_print(heap);
 
     free(ptr1);
+    free(ptr3);
 }
