@@ -1,37 +1,25 @@
-#include "types.h"
+#include "functions.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 
-void heap_print(t_heap *heap)
-{
-    printf("heap: %p (size: %lu)\n", heap, heap->size);
-    for (t_block *block = (void *)heap + sizeof(t_heap); block != NULL; block = block->next)
-        printf("  block: %p (size: %lu, free: %d)\n", block, block->size, block->free);
-}
-
 int main()
 {
-    void *ptr1 = malloc(HEAP_SIZE - sizeof(t_heap) - sizeof(t_block));
-    t_heap *heap = ptr1 - sizeof(t_block) - sizeof(t_heap);
-
+    void *ptr1 = malloc(1024);
     printf("Simple allocation:\n");
-    heap_print(heap);
+    show_alloc_mem();
     free(ptr1);
 
     ptr1 = malloc(8);
     void *ptr2 = malloc(32);
     void *ptr3 = malloc(16);
-    heap = ptr1 - sizeof(t_block) - sizeof(t_heap);
-
     printf("Multiple allocations:\n");
-    heap_print(heap);
-
+    show_alloc_mem();
     free(ptr2);
+
     ptr1 = realloc(ptr1, 41);
     printf("After reusing block:\n");
-    heap_print(heap);
-
+    show_alloc_mem();
     free(ptr1);
     free(ptr3);
 }

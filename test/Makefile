@@ -13,7 +13,7 @@ OBJS	:= $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 # Compiler and linker options
 CC		:= gcc
 CFLAGS	:= -Wall -Wextra -I$(INC_DIR)
-LDFLAGS	:= 
+LDFLAGS	:= -L.. -lft_malloc
 
 # Phony targets
 .PHONY: all clean fclean re

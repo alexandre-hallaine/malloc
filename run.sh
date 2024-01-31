@@ -1,4 +1,4 @@
 #!/bin/sh
 
-export LD_PRELOAD="$PWD/libft_malloc.so"
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD
 $@
