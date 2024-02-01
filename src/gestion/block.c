@@ -18,6 +18,7 @@ t_block *block_find(size_t size)
                 if (block->free && block->size >= size)
                     return block;
 
+    // if no free block found, allocate a new heap
     t_heap *heap = heap_allocate(type);
     if (heap == NULL)
         return NULL;

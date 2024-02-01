@@ -2,6 +2,7 @@
 
 t_heap *heap_first = NULL;
 
+// Allocates a new block of memory
 void *malloc(size_t size)
 {
     block_size_align(&size);

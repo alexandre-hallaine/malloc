@@ -1,5 +1,6 @@
 #include "functions.h"
 
+// Expands or shrinks a block of memory (or allocates a new one if can't). Data is preserved.
 void *realloc(void *ptr, size_t size)
 {
     t_heap *heap = heap_get(ptr);
