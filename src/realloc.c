@@ -2,9 +2,6 @@
 
 void *realloc(void *ptr, size_t size)
 {
-    if (ptr == NULL)
-        return malloc(size);
-
     t_heap *heap = heap_get(ptr);
     t_block *block = ptr - sizeof(t_block);
     if (heap == NULL || block->free)
