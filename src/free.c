@@ -1,6 +1,6 @@
 #include "functions.h"
 
-// Frees a block of memory
+// Free a block of memory
 void free(void *ptr)
 {
     if (ptr == NULL)

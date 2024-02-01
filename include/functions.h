@@ -21,3 +21,4 @@ void    block_merge_free(t_block *block);
 
 // gestion/heap.c
 void    show_alloc_mem();
+void    show_alloc_mem_ex();

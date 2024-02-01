@@ -70,8 +70,7 @@ t_heap *heap_get(void *address)
 {
     for (t_heap *heap = heap_first; heap != NULL; heap = heap->next)
     {
-        if (address >= (void *)heap + sizeof(t_heap)
-            && address < (void *)heap + heap->type * HEAP_SIZE)
+        if (address >= (void *)heap + sizeof(t_heap) && address < (void *)heap + heap->type * HEAP_SIZE)
             return heap;
     }
     return NULL;

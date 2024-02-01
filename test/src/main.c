@@ -6,19 +6,21 @@
 
 void *routine(void *ptr)
 {
-    ptr = realloc(ptr, sizeof(int));
-    printf("global: %d\n", *(int *)ptr);
+    int *value = realloc(ptr, sizeof(int) * 2);
+    value[1] = 42;
     return NULL;
 }
 
 int main()
 {
-    int *ptr = malloc(sizeof(int) * 2);
-    ptr[0] = 42;
-    ptr[1] = 0;
+    char *ptr = malloc(sizeof(int));
+    for (size_t i = 0; i < sizeof(int); i++)
+        ptr[i] = 0x42;
 
     pthread_t thread;
     pthread_create(&thread, NULL, routine, ptr);
     pthread_join(thread, NULL);
+
+    show_alloc_mem_ex();
     return 0;
 }
