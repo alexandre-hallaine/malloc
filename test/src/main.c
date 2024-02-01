@@ -19,7 +19,7 @@ int main()
     free(ptr2);
 
     printf("\n");
-    ptr1 = realloc(ptr1, 41);
+    ptr1 = realloc(ptr1, 25);
     printf("After reusing block:\n");
     show_alloc_mem();
 

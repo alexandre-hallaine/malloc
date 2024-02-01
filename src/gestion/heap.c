@@ -2,6 +2,19 @@
 
 #include <sys/mman.h>
 
+// Determine the heap type based on a block size. The block size is defined such that it can fit 100 times within a heap.
+t_heap_type heap_type(size_t block_size)
+{
+    block_size *= 100;
+    if (block_size <= (size_t)TINY * HEAP_SIZE)
+        return TINY;
+    else if (block_size <= (size_t)SMALL * HEAP_SIZE)
+        return SMALL;
+    else
+        return LARGE;
+}
+
+// Allocate a new heap
 t_heap *heap_allocate(t_heap_type type)
 {
     size_t size = type * HEAP_SIZE;
@@ -32,6 +45,7 @@ t_heap *heap_allocate(t_heap_type type)
     return heap_new;
 }
 
+// Free a heap
 void heap_free(t_heap *heap)
 {
     if (heap_first == heap)
@@ -51,6 +65,7 @@ void heap_free(t_heap *heap)
     munmap(heap, heap->type * HEAP_SIZE);
 }
 
+// Get the heap metadata from an address
 t_heap *heap_get(void *address)
 {
     for (t_heap *heap = heap_first; heap != NULL; heap = heap->next)
@@ -62,23 +77,10 @@ t_heap *heap_get(void *address)
     return NULL;
 }
 
+// Defragment the heap by merging adjacent free blocks
 void heap_defragment(t_heap *heap)
 {
-    t_block *block = (void *)heap + sizeof(t_heap);
-    while (block != NULL)
-        if (block->free && block->next != NULL && block->next->free)
-            block_merge(block, block->next);
-        else
-            block = block->next;
-}
-
-t_heap_type heap_type(size_t block_size)
-{
-    block_size *= 100;
-    if (block_size <= (size_t)TINY * HEAP_SIZE)
-        return TINY;
-    else if (block_size <= (size_t)SMALL * HEAP_SIZE)
-        return SMALL;
-    else
-        return LARGE;
+    for (t_block *block = (void *)heap + sizeof(t_heap); block != NULL; block = block->next)
+        if (block->free)
+            block_merge_free(block);
 }
