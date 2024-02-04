@@ -3,6 +3,9 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+#define HEAP_LIBERAL 1
+#define HEAP_DEFRAG 1
+
 #define HEAP_SIZE getpagesize()
 
 typedef struct s_block t_block;
