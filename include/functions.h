@@ -4,6 +4,7 @@
 
 void    *malloc(size_t size);
 void    free(void *ptr);
+void    *realloc(void *ptr, size_t size);
 
 // gestion/heap.c
 t_heap_type heap_type(size_t block_size);
