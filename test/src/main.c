@@ -21,6 +21,6 @@ int main()
     pthread_create(&thread, NULL, routine, ptr);
     pthread_join(thread, NULL);
 
-    show_alloc_mem_ex();
+    show_alloc_mem();
     return 0;
 }
