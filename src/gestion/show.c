@@ -20,29 +20,6 @@ void print_number(char *base, unsigned int number) {
     write(0, base + number % base_len, 1);
 }
 
-// Write the hexadecimal representation of a memory block to the standard output
-void print_memory_data(const unsigned char *address, size_t num_bytes) {
-    for (size_t i = 0; i < num_bytes; i += 8) {
-        if (i)
-            write(0, "\n", 1);
-
-        write(0, "0x", 2);
-        print_number("0123456789abcdef", (uintptr_t)address);
-        write(0, ": ", 2);
-
-        for (unsigned char j = 0; j < 8; j++) {
-            if (j)
-                write(0, " ", 1);
-
-            unsigned char value = address[i + j];
-            if (!(value & 0xF0))
-                write(0, "0", 1);
-            print_number("0123456789abcdef", value);
-        }
-    }
-    write(0, "\n", 1);
-}
-
 // Write the type of the heap to the standard output
 void print_heap_type(t_heap_type type) {
     switch (type) {
@@ -80,6 +57,29 @@ void show_alloc_mem()
                 write(0, " bytes\n", 7);
             }
     }
+}
+
+// Write the hexadecimal representation of a memory block to the standard output
+void print_memory_data(const unsigned char *address, size_t num_bytes) {
+    for (size_t i = 0; i < num_bytes; i += 8) {
+        if (i)
+            write(0, "\n", 1);
+
+        write(0, "0x", 2);
+        print_number("0123456789abcdef", (uintptr_t)address);
+        write(0, ": ", 2);
+
+        for (unsigned char j = 0; j < 8; j++) {
+            if (j)
+                write(0, " ", 1);
+
+            unsigned char value = address[i + j];
+            if (!(value & 0xF0))
+                write(0, "0", 1);
+            print_number("0123456789abcdef", value);
+        }
+    }
+    write(0, "\n", 1);
 }
 
 // Show hexadecimal representation of the allocated memory
