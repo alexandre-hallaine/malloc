@@ -3,7 +3,7 @@
 #include <sys/mman.h>
 #include <sys/resource.h>
 
-// Determine the heap type based on a block size. The block size is defined such that it can fit 100 times within a heap.
+// Determine the heap type based on a block size. The block size is defined such that it can fit 100 times within that heap type.
 t_heap_type heap_type(size_t block_size)
 {
     block_size *= 100;
@@ -57,6 +57,18 @@ t_heap *heap_allocate(t_heap_type heap_type)
 // Free a heap
 void heap_free(t_heap *heap)
 {
+    t_block *block = (void *)heap + sizeof(t_heap);
+    if (block->free == false || block->size != heap->type * HEAP_SIZE - sizeof(t_block) - sizeof(t_heap)) // If the heap is not empty
+        return;
+
+    bool found = false;
+    for (t_heap *tmp = heap_first; tmp != NULL; tmp = tmp->next)
+        if (tmp != heap && tmp->type == heap->type) // If there is another heap of the same type
+            found = true;
+
+    if (found == false) // Must keep at least one heap of each type
+        return;
+
     if (heap_first == heap)
         heap_first = heap->next;
     else

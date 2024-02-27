@@ -1,6 +1,6 @@
 #include "functions.h"
 
-// Align a block size to 16 bytes
+// Update the block size to be aligned with 16 bytes
 void block_size_align(size_t *size)
 {
     *size += sizeof(t_block);
@@ -36,15 +36,15 @@ void block_split(t_block *block, size_t size)
     block_new->size = block->size - size - sizeof(t_block);
     block_new->free = true;
 
-    block->next = block_new;
     block->size = size;
+    block->next = block_new;
 }
 
 // Merge the next block with the current block
 void block_merge(t_block *block1, t_block *block2)
 {
-    block1->size += sizeof(t_block) + block2->size;
     block1->next = block2->next;
+    block1->size += sizeof(t_block) + block2->size;
 }
 
 // Merge all next free blocks
