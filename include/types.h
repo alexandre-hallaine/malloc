@@ -30,4 +30,5 @@ struct s_heap {
     t_heap *next;
 
     t_heap_type type;
+    char zero[8]; // Padding
 };
