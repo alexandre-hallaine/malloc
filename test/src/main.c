@@ -1,26 +1,32 @@
-#include "functions.h"
-
-#include <stdlib.h>
 #include <stdio.h>
-#include <pthread.h>
+#include <stdlib.h>
+#include <stdint.h>
 
-void *routine(void *ptr)
+void error(const char *msg)
 {
-    int *value = realloc(ptr, sizeof(int) * 2);
-    value[1] = 42;
-    return NULL;
+    fprintf(stderr, "Error: %s\n", msg);
+    exit(1);
 }
 
 int main()
 {
-    char *ptr = malloc(sizeof(int));
-    for (size_t i = 0; i < sizeof(int); i++)
-        ptr[i] = 0x42;
+    void *ptr = malloc(8);
+    uintptr_t addr = (uintptr_t)ptr;
 
-    pthread_t thread;
-    pthread_create(&thread, NULL, routine, ptr);
-    pthread_join(thread, NULL);
+    if (addr == 0)
+        error("malloc returned NULL");
+    if ((addr & 0x10) != 0)
+        error("malloc returned unaligned address");
 
-    show_alloc_mem();
+    free(ptr);
+    ptr = malloc(8);
+    if ((uintptr_t)ptr != addr)
+        error("malloc did not return the same address after free");
+
+    ptr = realloc(ptr, 1024 * 1024 * 128);
+    if (ptr == NULL)
+        error("realloc returned NULL with the size of 128M");
+
+    printf("malloc, free, realloc: OK\n");
     return 0;
 }

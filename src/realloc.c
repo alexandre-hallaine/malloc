@@ -20,7 +20,7 @@ void *realloc(void *ptr, size_t size)
 
     void *new = malloc(size);
     if (new == NULL)
-        return ptr;
+        return NULL;
 
     for (size_t i = 0; i < block->size; i++)
         ((char *)new)[i] = ((char *)ptr)[i];
