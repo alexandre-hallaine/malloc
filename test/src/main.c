@@ -15,7 +15,7 @@ int main()
 
     if (addr == 0)
         error("malloc returned NULL");
-    if ((addr & 0x10) != 0)
+    if ((addr % 0x10) != 0)
         error("malloc returned unaligned address");
 
     free(ptr);
