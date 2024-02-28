@@ -3,16 +3,20 @@
 // Free a block of memory
 void free(void *ptr)
 {
-    if (ptr == NULL)
-        return;
+    t_block *block;
+    t_heap *heap;
 
-    t_heap *heap = heap_get(ptr);
-    if (heap == NULL)
-        return;
+    pthread_mutex_lock(&mutex);
+    heap = heap_get(ptr);
 
-    t_block *block = ptr - sizeof(t_block);
-    block->free = true;
+    if (heap != NULL)
+    {
+        block = ptr - sizeof(t_block);
+        block->free = true;
 
-    heap_defragment(heap);
-    heap_free(heap);
+        heap_defragment(heap);
+        heap_free(heap);
+    }
+
+    pthread_mutex_unlock(&mutex);
 }

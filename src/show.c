@@ -2,24 +2,6 @@
 
 #include <stdint.h>
 
-size_t ft_strlen(const char *str)
-{
-    size_t	len = 0;
-    while (str[len])
-        len++;
-    return len;
-}
-
-// Write a number to the standard output using a given base
-void print_number(char *base, unsigned int number) {
-    unsigned char base_len = ft_strlen(base);
-
-    if (number / base_len != 0)
-        print_number(base, number / base_len);
-
-    write(0, base + number % base_len, 1);
-}
-
 // Write the type of the heap to the standard output
 void print_heap_type(t_heap_type type) {
     switch (type) {
@@ -37,9 +19,28 @@ void print_heap_type(t_heap_type type) {
     }
 }
 
+size_t ft_strlen(const char *str)
+{
+    size_t	len = 0;
+
+    while (str[len])
+        len++;
+    return len;
+}
+
+// Write a number to the standard output using a given base
+void print_number(char *base, unsigned int number) {
+    unsigned char base_len = ft_strlen(base);
+
+    if (number / base_len != 0)
+        print_number(base, number / base_len);
+    write(0, base + number % base_len, 1);
+}
+
 // Show metadata of the allocated memory
 void show_alloc_mem()
 {
+    pthread_mutex_lock(&mutex);
     for (t_heap *heap = heap_first; heap != NULL; heap = heap->next)
     {
         print_heap_type(heap->type);
@@ -57,10 +58,13 @@ void show_alloc_mem()
                 write(0, " bytes\n", 7);
             }
     }
+    pthread_mutex_unlock(&mutex);
 }
 
 // Write the hexadecimal representation of a memory block to the standard output
 void print_memory_data(const unsigned char *address, size_t num_bytes) {
+    unsigned char value;
+
     for (size_t i = 0; i < num_bytes; i += 8) {
         if (i)
             write(0, "\n", 1);
@@ -73,7 +77,7 @@ void print_memory_data(const unsigned char *address, size_t num_bytes) {
             if (j)
                 write(0, " ", 1);
 
-            unsigned char value = address[i + j];
+            value = address[i + j];
             if (!(value & 0xF0))
                 write(0, "0", 1);
             print_number("0123456789abcdef", value);
@@ -85,8 +89,10 @@ void print_memory_data(const unsigned char *address, size_t num_bytes) {
 // Show hexadecimal representation of the allocated memory
 void show_alloc_mem_ex()
 {
+    pthread_mutex_lock(&mutex);
     for (t_heap *heap = heap_first; heap != NULL; heap = heap->next)
         for (t_block *block = (void *)heap + sizeof(t_heap); block != NULL; block = block->next)
             if (!block->free)
                 print_memory_data((void *)block + sizeof(t_block), block->size);
+    pthread_mutex_unlock(&mutex);
 }

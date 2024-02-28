@@ -7,6 +7,7 @@
 t_heap_type heap_type(size_t block_size)
 {
     block_size *= 100;
+
     if (block_size <= (size_t)TINY * HEAP_SIZE)
         return TINY;
     else if (block_size <= (size_t)SMALL * HEAP_SIZE)
@@ -16,21 +17,22 @@ t_heap_type heap_type(size_t block_size)
 }
 
 // Allocate a new heap
-t_heap *heap_allocate(t_heap_type heap_type)
+t_heap *heap_allocate(t_heap_type type)
 {
     t_heap *heap_last = NULL;
     size_t heap_total_size = 0;
+
     for (t_heap *heap = heap_first; heap != NULL; heap = heap->next)
     {
         heap_last = heap;
-        heap_total_size += heap_type * HEAP_SIZE;
+        heap_total_size += type * HEAP_SIZE;
     }
 
     // Check if the heap limit is reached
-    size_t size = heap_type * HEAP_SIZE;
+    size_t size = type * HEAP_SIZE;
     struct rlimit rlim;
     getrlimit(RLIMIT_AS, &rlim);
-    if (HEAP_LIMIT && heap_total_size + size > rlim.rlim_cur)
+    if (heap_total_size + size > rlim.rlim_cur)
         return NULL;
 
     void *map = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -39,7 +41,7 @@ t_heap *heap_allocate(t_heap_type heap_type)
 
     t_heap *heap_new = map;
     heap_new->next = NULL;
-    heap_new->type = heap_type;
+    heap_new->type = type;
 
     // create the free space block
     t_block *block_first = map + sizeof(t_heap);
@@ -57,6 +59,9 @@ t_heap *heap_allocate(t_heap_type heap_type)
 // Free a heap
 void heap_free(t_heap *heap)
 {
+    if (HEAP_FREE == false)
+        return;
+
     t_block *block = (void *)heap + sizeof(t_heap);
     if (block->free == false || block->size != heap->type * HEAP_SIZE - sizeof(t_block) - sizeof(t_heap)) // If the heap is not empty
         return;

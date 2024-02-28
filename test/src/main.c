@@ -1,3 +1,5 @@
+#include "functions.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -26,6 +28,11 @@ int main()
     ptr = realloc(ptr, 1024 * 1024 * 128);
     if (ptr == NULL)
         error("realloc returned NULL with the size of 128M");
+
+    free(ptr);
+    for (int i = 0; i < 16; i++)
+        free(malloc(HEAP_SIZE * 2 << i)); // try all sizes
+    show_alloc_mem();
 
     printf("malloc, free, realloc: OK\n");
     return 0;
